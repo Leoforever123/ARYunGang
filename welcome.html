@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云冈石窟 AR 体验</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=ZCOOL+XiaoWei&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0a0a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Noto Serif SC', serif;
+            overflow: hidden;
+        }
+        
+        .welcome-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background: linear-gradient(180deg, 
+                #1a1612 0%, 
+                #2d2620 30%, 
+                #3a3228 50%, 
+                #2d2620 70%, 
+                #1a1612 100%);
+            transition: opacity 1.5s ease-out;
+            cursor: pointer;
+        }
+        
+        .welcome-container.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* 纸张纹理效果 */
+        .welcome-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(139, 115, 85, 0.03) 2px,
+                    rgba(139, 115, 85, 0.03) 4px
+                );
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* 水墨渐变效果 */
+        .ink-gradient {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                ellipse at 50% 30%,
+                transparent 0%,
+                rgba(0, 0, 0, 0.3) 50%,
+                rgba(0, 0, 0, 0.6) 100%
+            );
+            opacity: 0.8;
+            z-index: 2;
+        }
+        
+        /* 佛像轮廓 */
+        .buddha-silhouette {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(60vw, 500px);
+            height: min(90vh, 700px);
+            opacity: 0.15;
+            z-index: 3;
+            filter: blur(1px);
+        }
+        
+        /* 主标题 */
+        .main-title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: clamp(60px, 10vw, 120px);
+            font-weight: 900;
+            color: #d4a76a;
+            text-shadow: 
+                0 0 30px rgba(212, 167, 106, 0.5),
+                0 0 60px rgba(212, 167, 106, 0.3),
+                2px 2px 4px rgba(0, 0, 0, 0.8);
+            letter-spacing: 30px;
+            z-index: 10;
+            text-align: center;
+            animation: glow 4s ease-in-out infinite;
+        }
+        
+        /* 副标题 */
+        .subtitle {
+            position: absolute;
+            top: calc(50% + 100px);
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(18px, 3vw, 28px);
+            color: #8b7355;
+            letter-spacing: 8px;
+            z-index: 10;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        
+        /* 点击提示 */
+        .click-hint {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(14px, 2vw, 20px);
+            color: #6b5d4f;
+            letter-spacing: 4px;
+            z-index: 10;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        /* 印章效果 */
+        .seal {
+            position: absolute;
+            bottom: 8%;
+            right: 8%;
+            width: clamp(60px, 8vw, 90px);
+            height: clamp(60px, 8vw, 90px);
+            background: rgba(139, 0, 0, 0.7);
+            border: 3px solid rgba(139, 0, 0, 0.9);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: clamp(20px, 3vw, 32px);
+            color: #fff;
+            font-weight: bold;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.5);
+            transform: rotate(-5deg);
+        }
+        
+        /* 动画 */
+        @keyframes glow {
+            0%, 100% {
+                opacity: 0.8;
+                text-shadow: 
+                    0 0 30px rgba(212, 167, 106, 0.5),
+                    0 0 60px rgba(212, 167, 106, 0.3);
+            }
+            50% {
+                opacity: 1;
+                text-shadow: 
+                    0 0 40px rgba(212, 167, 106, 0.7),
+                    0 0 80px rgba(212, 167, 106, 0.5);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+        }
+        
+        /* 纹理叠加 */
+        .texture-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" /></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.05"/></svg>');
+            opacity: 0.3;
+            z-index: 11;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-container" id="welcomeContainer">
+        <!-- 水墨渐变 -->
+        <div class="ink-gradient"></div>
+        
+        <!-- 佛像轮廓 -->
+        <svg class="buddha-silhouette" viewBox="0 0 400 600" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="buddhaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#d4a76a;stop-opacity:0.2" />
+                    <stop offset="100%" style="stop-color:#d4a76a;stop-opacity:0.05" />
+                </linearGradient>
+            </defs>
+            <!-- 佛像头部光环 -->
+            <ellipse cx="200" cy="120" rx="80" ry="80" fill="url(#buddhaGrad)" opacity="0.3"/>
+            <!-- 佛像头部 -->
+            <ellipse cx="200" cy="140" rx="60" ry="70" fill="url(#buddhaGrad)"/>
+            <!-- 佛像身体 -->
+            <path d="M 140 200 Q 140 250, 140 300 L 140 450 Q 140 480, 160 490 L 240 490 Q 260 480, 260 450 L 260 300 Q 260 250, 260 200 Z" 
+                  fill="url(#buddhaGrad)"/>
+            <!-- 双手合十 -->
+            <ellipse cx="200" cy="320" rx="40" ry="50" fill="url(#buddhaGrad)" opacity="0.8"/>
+            <!-- 莲花座 -->
+            <ellipse cx="200" cy="500" rx="100" ry="30" fill="url(#buddhaGrad)" opacity="0.6"/>
+        </svg>
+        
+        <!-- 主标题 -->
+        <h1 class="main-title">云冈石窟</h1>
+        
+        <!-- 副标题 -->
+        <div class="subtitle">AR 穿越体验</div>
+        
+        <!-- 点击提示 -->
+        <div class="click-hint">点击任意处进入</div>
+        
+        <!-- 印章 -->
+        <div class="seal">云冈</div>
+        
+        <!-- 纹理叠加 -->
+        <div class="texture-overlay"></div>
+    </div>
+    
+    <script>
+        const welcomeContainer = document.getElementById('welcomeContainer');
+        
+        welcomeContainer.addEventListener('click', function() {
+            welcomeContainer.classList.add('fade-out');
+            
+            // 1.5秒后跳转
+            setTimeout(() => {
+                window.location.href = 'main.html';
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
+

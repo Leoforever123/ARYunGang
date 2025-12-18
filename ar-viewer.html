@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>云冈石窟AR - 实时体验</title>
+    
+    <!-- MindAR和A-Frame库 -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.0/dist/mindar-image.prod.js"></script>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.0/dist/mindar-image-aframe.prod.js"></script>
+    
+    <!-- 云冈滤镜 -->
+    <script src="filters/yungang-filter.js"></script>
+    <script src="scripts/filter-controller.js"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        
+        #ar-scene {
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #filter-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 500;
+            pointer-events: none;
+            display: none;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.05);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .filter-controls {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .filter-strength {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .filter-strength label {
+            color: white;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        
+        .filter-strength input[type="range"] {
+            width: 150px;
+        }
+        
+        .filter-strength span {
+            color: white;
+            font-size: 14px;
+            min-width: 40px;
+        }
+        
+        .hint {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            max-width: 80%;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载提示 -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div id="loading-text">正在加载AR引擎...</div>
+        <div id="loading-detail" style="font-size: 14px; margin-top: 10px; opacity: 0.7;">
+            首次加载需要 5-10 秒
+        </div>
+        <div style="font-size: 12px; margin-top: 20px; opacity: 0.5;">
+            💡 提示：建议在 WiFi 环境下使用
+        </div>
+    </div>
+    
+    <!-- 控制按钮 -->
+    <div class="controls">
+        <button class="btn" onclick="window.location.href='main.html'">
+            ⬅ 返回首页
+        </button>
+    </div>
+    
+    <!-- 滤镜控制 -->
+    <div class="filter-controls">
+        <button id="toggle-filter" class="btn" disabled style="opacity: 0.5;">
+            🎨 云冈滤镜: 加载中...
+        </button>
+        
+        <div class="filter-strength">
+            <label>强度:</label>
+            <input type="range" id="filter-strength" 
+                   min="0" max="100" value="100">
+            <span id="strength-value">100%</span>
+        </div>
+    </div>
+    
+    <!-- 提示信息 -->
+    <div class="hint" id="hint">
+        📱 请将摄像头对准标记图像
+    </div>
+    
+    <!-- 滤镜显示层 -->
+    <canvas id="filter-canvas"></canvas>
+    
+    <!-- AR场景 -->
+    <a-scene
+        id="ar-scene"
+        mindar-image="
+            imageTargetSrc: assets/target.mind;
+            uiScanning: no;
+            uiLoading: no;
+        "
+        color-space="sRGB"
+        renderer="colorManagement: true, physicallyCorrectLights"
+        vr-mode-ui="enabled: false"
+        device-orientation-permission-ui="enabled: false"
+    >
+        <!-- 资源预加载 -->
+        <a-assets>
+            <!-- 3D佛像模型 -->
+            <a-asset-item 
+                id="buddha-model" 
+                src="models/buddha_big.glb"
+            ></a-asset-item>
+        </a-assets>
+        
+        <!-- 摄像头 -->
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+        
+        <!-- AR目标实体 - 当识别到标记图像时触发 -->
+        <a-entity mindar-image-target="targetIndex: 0">
+            
+            <!-- 3D佛像模型容器 -->
+            <a-entity 
+                id="buddha-container"
+                position="0 0 0"
+                rotation="0 0 0"
+            >
+                <!-- 佛像模型 -->
+                <a-gltf-model
+                    id="buddha-entity"
+                    src="models/buddha_big.glb"
+                    position="0 0 0"
+                    rotation="0 0 0"
+                    scale="0.7 0.7 0.7"
+
+                    animation__scalein="
+                        property: scale;
+                        from: 0.1 0.1 0.1;
+                        to: 0.7 0.7 0.7;
+                        dur: 1000;
+                        easing: easeOutElastic;
+                    "
+                    animation__rotate="
+                        property: rotation;
+                        from: 0 0 0;
+                        to: 0 360 0;
+                        dur: 20000;
+                        easing: linear;
+                        loop: true;
+                    "
+                    class="clickable"
+                    loaded="this.setAttribute('animation__fadein', 'enabled');"
+                >
+                </a-gltf-model>
+                
+                <!-- 环境光照 -->
+                <a-light 
+                    type="ambient" 
+                    intensity="0.8"
+                    color="#FFF"
+                ></a-light>
+                
+                <!-- 方向光 -->
+                <a-light 
+                    type="directional" 
+                    position="1 2 1" 
+                    intensity="1.2"
+                    color="#FFE4B5"
+                    castShadow="true"
+                ></a-light>
+                
+                <!-- 补光 -->
+                <a-light 
+                    type="point" 
+                    position="0 1 0" 
+                    intensity="0.5"
+                    color="#FFA500"
+                    distance="3"
+                ></a-light>
+            </a-entity>
+            
+        </a-entity>
+    </a-scene>
+    
+    <script src="scripts/ar-controller.js"></script>
+</body>
+</html>

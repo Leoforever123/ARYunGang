@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云冈石窟 AR 体验</title>
+    <link rel="stylesheet" href="styles/main.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=ZCOOL+XiaoWei&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background: linear-gradient(180deg, #1a1612 0%, #2d2620 50%, #1a1612 100%);
+            color: #d4a76a;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* 纸张纹理 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(139, 115, 85, 0.02) 2px,
+                    rgba(139, 115, 85, 0.02) 4px
+                );
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* 水墨背景效果 */
+        .ink-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                ellipse at 50% 30%,
+                transparent 0%,
+                rgba(0, 0, 0, 0.2) 50%,
+                rgba(0, 0, 0, 0.5) 100%
+            );
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        /* 主容器 */
+        .main-container {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        /* 顶部装饰线 */
+        .decorative-line {
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(212, 167, 106, 0.4) 50%,
+                transparent 100%
+            );
+            margin: 0 auto 40px;
+        }
+        
+        /* 标题区域 */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 60px 20px;
+        }
+        
+        .hero-title {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: clamp(48px, 8vw, 96px);
+            font-weight: 900;
+            color: #d4a76a;
+            text-shadow: 
+                0 0 30px rgba(212, 167, 106, 0.5),
+                0 0 60px rgba(212, 167, 106, 0.3),
+                2px 2px 4px rgba(0, 0, 0, 0.8);
+            letter-spacing: 20px;
+            margin-bottom: 20px;
+            animation: glow 4s ease-in-out infinite;
+        }
+        
+        .hero-subtitle {
+            font-size: clamp(18px, 3vw, 28px);
+            color: #8b7355;
+            letter-spacing: 8px;
+            margin-bottom: 50px;
+        }
+        
+        /* 开始体验按钮 */
+        .cta-button {
+            display: inline-block;
+            padding: 20px 60px;
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: clamp(20px, 4vw, 32px);
+            color: #fff;
+            background: linear-gradient(135deg, #8b6f47 0%, #d4a76a 100%);
+            border: 3px solid #d4a76a;
+            border-radius: 50px;
+            text-decoration: none;
+            letter-spacing: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 0 20px rgba(212, 167, 106, 0.3),
+                0 8px 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .cta-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 0 40px rgba(212, 167, 106, 0.6),
+                0 12px 30px rgba(0, 0, 0, 0.7);
+        }
+        
+        .cta-button span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 禅意圆环装饰 */
+        .zen-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(600px, 80vw);
+            height: min(600px, 80vw);
+            border: 2px solid rgba(212, 167, 106, 0.15);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        .zen-circle::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 85%;
+            height: 85%;
+            border: 1px solid rgba(212, 167, 106, 0.1);
+            border-radius: 50%;
+        }
+        
+        /* 详细信息区域 */
+        .info-section {
+            margin-top: 100px;
+            padding: 60px 20px;
+            background: rgba(26, 22, 18, 0.5);
+            border-top: 2px solid rgba(212, 167, 106, 0.3);
+            border-bottom: 2px solid rgba(212, 167, 106, 0.3);
+        }
+        
+        .info-title {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: clamp(28px, 5vw, 42px);
+            color: #d4a76a;
+            text-align: center;
+            margin-bottom: 40px;
+            letter-spacing: 12px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background: rgba(45, 38, 32, 0.6);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(212, 167, 106, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(45, 38, 32, 0.8);
+            border-color: rgba(212, 167, 106, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .feature-title {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 24px;
+            color: #d4a76a;
+            margin-bottom: 10px;
+            letter-spacing: 4px;
+        }
+        
+        .feature-desc {
+            font-size: 16px;
+            color: #8b7355;
+            line-height: 1.8;
+        }
+        
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6b5d4f;
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+        
+        .seal {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            background: rgba(139, 0, 0, 0.7);
+            border: 2px solid rgba(139, 0, 0, 0.9);
+            border-radius: 8px;
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 24px;
+            color: #fff;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.5);
+            transform: rotate(-5deg);
+        }
+        
+        /* 动画 */
+        @keyframes glow {
+            0%, 100% {
+                opacity: 0.9;
+                text-shadow: 
+                    0 0 30px rgba(212, 167, 106, 0.5),
+                    0 0 60px rgba(212, 167, 106, 0.3);
+            }
+            50% {
+                opacity: 1;
+                text-shadow: 
+                    0 0 40px rgba(212, 167, 106, 0.7),
+                    0 0 80px rgba(212, 167, 106, 0.5);
+            }
+        }
+        
+        /* 使用指南特殊布局 */
+        .guide-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .guide-single {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hero-title {
+                letter-spacing: 10px;
+            }
+            
+            .cta-button {
+                padding: 15px 40px;
+                letter-spacing: 6px;
+            }
+            
+            .info-title {
+                letter-spacing: 6px;
+            }
+            
+            .guide-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .guide-single {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 水墨背景 -->
+    <div class="ink-bg"></div>
+    
+    <div class="main-container">
+        <!-- 顶部装饰线 -->
+        <div class="decorative-line"></div>
+        
+        <!-- 英雄区域 -->
+        <section class="hero-section">
+            <!-- 禅意圆环 -->
+            <div class="zen-circle"></div>
+            
+            <h1 class="hero-title">云冈石窟</h1>
+            <p class="hero-subtitle">千年佛韵 · AR 穿越体验</p>
+            
+            <!-- 开始体验按钮 -->
+            <a href="ar-viewer.html" class="cta-button">
+                <span>启动 AR 相机</span>
+            </a>
+        </section>
+        
+        <!-- 详细信息区域 -->
+        <section class="info-section">
+            <h2 class="info-title">体验特色</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3 class="feature-title">AR 识别</h3>
+                    <p class="feature-desc">
+                        扫描识别标记图像，在现实空间中呈现云冈石窟3D佛像，体验千年文化的数字重生。
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3 class="feature-title">云冈滤镜</h3>
+                    <p class="feature-desc">
+                        独家云冈石窟风格滤镜，基于真实石窟图像训练，呈现暖黄石雕质感，可调节强度。
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🏛️</div>
+                    <h3 class="feature-title">3D 模型</h3>
+                    <p class="feature-desc">
+                        高精度佛像3D模型，360度旋转展示，点击触发动画效果，沉浸式文化体验。
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌟</div>
+                    <h3 class="feature-title">实时渲染</h3>
+                    <p class="feature-desc">
+                        流畅的实时渲染技术，30+ FPS性能保证，支持移动端和桌面端浏览器。
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📖</div>
+                    <h3 class="feature-title">文化传承</h3>
+                    <p class="feature-desc">
+                        公元460-524年北魏石窟艺术，通过现代AR技术，让千年文化触手可及。
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3 class="feature-title">易于使用</h3>
+                    <p class="feature-desc">
+                        无需下载APP，打开浏览器即可体验，支持Chrome、Safari等主流浏览器。
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 使用说明 -->
+        <section class="info-section" style="margin-top: 40px;">
+            <h2 class="info-title">使用指南</h2>
+            
+            <div style="max-width: 750px; margin: 0 auto;">
+                <!-- 前两个卡片 -->
+                <div class="guide-row">
+                    <div class="feature-card">
+                        <div class="feature-icon">1️⃣</div>
+                        <h3 class="feature-title">点击按钮</h3>
+                        <p class="feature-desc">
+                            点击"启动AR相机"按钮，浏览器会请求摄像头权限，请点击允许。
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">2️⃣</div>
+                        <h3 class="feature-title">对准标记</h3>
+                        <p class="feature-desc">
+                            将摄像头对准云冈石窟标记图像（需提前打印或在另一设备显示）。
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- 第三个卡片单独一行，宽度与上面两个的总宽度一致 -->
+                <div class="feature-card">
+                    <div class="feature-icon">3️⃣</div>
+                    <h3 class="feature-title">体验功能</h3>
+                    <p class="feature-desc">
+                        开启云冈滤镜，调节强度，，尽情探索千年文化。
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 页脚 -->
+        <footer class="footer">
+            <div class="seal">云冈</div>
+            <p>云冈石窟 AR 体验项目</p>
+            <p style="margin-top: 10px; font-size: 12px;">
+                北魏遗珍 · 公元 460-524 年
+            </p>
+            <p style="margin-top: 20px; font-size: 12px; opacity: 0.6;">
+                建议使用 Chrome 浏览器以获得最佳体验
+            </p>
+        </footer>
+        
+        <!-- 底部装饰线 -->
+        <div class="decorative-line" style="margin-top: 40px;"></div>
+    </div>
+</body>
+</html>

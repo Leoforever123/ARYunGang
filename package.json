@@ -1,0 +1,40 @@
+{
+  "name": "yungang-ar-project",
+  "version": "1.0.0",
+  "description": "云冈石窟AR体验项目 - 将云冈石窟艺术美学与现代AR技术相结合",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "dev": "npx http-server -p 8000 -o",
+    "build": "echo 'No build step required for static site'",
+    "deploy": "vercel --prod",
+    "test": "echo 'Running tests...' && node test/run-tests.js"
+  },
+  "keywords": [
+    "ar",
+    "webxr",
+    "yungang",
+    "buddha",
+    "cultural-heritage",
+    "mindar",
+    "aframe"
+  ],
+  "author": "云冈AR项目团队 (王骏达、凌萌、侯超然)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/yungang-ar.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/yungang-ar/issues"
+  },
+  "homepage": "https://github.com/your-username/yungang-ar#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  }
+}

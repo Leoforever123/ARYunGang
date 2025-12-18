@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云冈石窟 - 燕云十六声风格海报</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=ZCOOL+XiaoWei&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0a0a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Noto Serif SC', serif;
+            overflow-x: hidden;
+        }
+        
+        .poster-container {
+            width: 1800px;
+            height: 1350px;
+            position: relative;
+            background: linear-gradient(180deg, 
+                #1a1612 0%, 
+                #2d2620 30%, 
+                #3a3228 50%, 
+                #2d2620 70%, 
+                #1a1612 100%);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
+            overflow: hidden;
+        }
+        
+        /* 纸张纹理效果 */
+        .poster-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(139, 115, 85, 0.03) 2px,
+                    rgba(139, 115, 85, 0.03) 4px
+                );
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* 水墨渐变效果 */
+        .ink-gradient {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                ellipse at 50% 30%,
+                transparent 0%,
+                rgba(0, 0, 0, 0.3) 50%,
+                rgba(0, 0, 0, 0.6) 100%
+            );
+            opacity: 0.8;
+            z-index: 2;
+        }
+        
+        /* 佛像轮廓 SVG */
+        .buddha-silhouette {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 50%;
+            opacity: 0.15;
+            z-index: 3;
+            filter: blur(1px);
+        }
+        
+        /* 主标题 */
+        .main-title {
+            position: absolute;
+            top: 12%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 120px;
+            font-weight: 900;
+            color: #d4a76a;
+            text-shadow: 
+                0 0 30px rgba(212, 167, 106, 0.5),
+                0 0 60px rgba(212, 167, 106, 0.3),
+                2px 2px 4px rgba(0, 0, 0, 0.8);
+            letter-spacing: 30px;
+            writing-mode: vertical-rl;
+            z-index: 10;
+            text-align: center;
+            line-height: 1.2;
+            padding-right: 30px;
+        }
+        
+        /* 副标题 */
+        .subtitle {
+            position: absolute;
+            top: 12%;
+            right: 15%;
+            font-family: 'Noto Serif SC', serif;
+            font-size: 28px;
+            color: #8b7355;
+            writing-mode: vertical-rl;
+            letter-spacing: 8px;
+            z-index: 10;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* 石窟形状装饰 */
+        .cave-shape {
+            position: absolute;
+            bottom: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            height: 35%;
+            background: radial-gradient(
+                ellipse at center,
+                rgba(20, 15, 10, 0.9) 0%,
+                rgba(45, 38, 32, 0.7) 40%,
+                transparent 70%
+            );
+            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+            z-index: 4;
+        }
+        
+        /* 禅意圆环 */
+        .zen-circle {
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 300px;
+            border: 3px solid rgba(212, 167, 106, 0.3);
+            border-radius: 50%;
+            z-index: 8;
+        }
+        
+        .zen-circle::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 240px;
+            height: 240px;
+            border: 2px solid rgba(212, 167, 106, 0.2);
+            border-radius: 50%;
+        }
+        
+        /* 书法装饰文字 */
+        .calligraphy-text {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 36px;
+            color: #6b5d4f;
+            letter-spacing: 20px;
+            z-index: 10;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* 印章效果 */
+        .seal {
+            position: absolute;
+            bottom: 8%;
+            right: 12%;
+            width: 90px;
+            height: 90px;
+            background: rgba(139, 0, 0, 0.7);
+            border: 3px solid rgba(139, 0, 0, 0.9);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 32px;
+            color: #fff;
+            font-weight: bold;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.5);
+            transform: rotate(-5deg);
+        }
+        
+        /* 水墨飞溅效果 */
+        .ink-splash {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none;
+        }
+        
+        .splash {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(
+                circle,
+                rgba(0, 0, 0, 0.2) 0%,
+                transparent 70%
+            );
+        }
+        
+        .splash-1 {
+            width: 200px;
+            height: 200px;
+            top: 20%;
+            left: 10%;
+            opacity: 0.3;
+        }
+        
+        .splash-2 {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 15%;
+            opacity: 0.2;
+        }
+        
+        .splash-3 {
+            width: 180px;
+            height: 180px;
+            bottom: 20%;
+            left: 15%;
+            opacity: 0.25;
+        }
+        
+        /* 装饰线条 */
+        .decorative-line {
+            position: absolute;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(212, 167, 106, 0.4) 50%,
+                transparent 100%
+            );
+            height: 2px;
+            z-index: 9;
+        }
+        
+        .line-top {
+            top: 8%;
+            left: 10%;
+            width: 80%;
+        }
+        
+        .line-bottom {
+            bottom: 12%;
+            left: 10%;
+            width: 80%;
+        }
+        
+        /* 年代标记 */
+        .era-mark {
+            position: absolute;
+            bottom: 10%;
+            left: 12%;
+            font-family: 'Noto Serif SC', serif;
+            font-size: 20px;
+            color: #6b5d4f;
+            letter-spacing: 4px;
+            z-index: 10;
+            writing-mode: vertical-rl;
+        }
+        
+        /* 动态光效 */
+        @keyframes glow {
+            0%, 100% {
+                opacity: 0.3;
+                text-shadow: 
+                    0 0 30px rgba(212, 167, 106, 0.5),
+                    0 0 60px rgba(212, 167, 106, 0.3);
+            }
+            50% {
+                opacity: 0.5;
+                text-shadow: 
+                    0 0 40px rgba(212, 167, 106, 0.7),
+                    0 0 80px rgba(212, 167, 106, 0.5);
+            }
+        }
+        
+        .main-title {
+            animation: glow 4s ease-in-out infinite;
+        }
+        
+        /* 山峦剪影 */
+        .mountain-silhouette {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 30%;
+            z-index: 6;
+        }
+        
+        .mountain {
+            position: absolute;
+            bottom: 0;
+        }
+        
+        .mountain-1 {
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 200px solid transparent;
+            border-right: 200px solid transparent;
+            border-bottom: 200px solid rgba(26, 22, 18, 0.8);
+        }
+        
+        .mountain-2 {
+            left: 30%;
+            width: 0;
+            height: 0;
+            border-left: 250px solid transparent;
+            border-right: 250px solid transparent;
+            border-bottom: 250px solid rgba(26, 22, 18, 0.9);
+        }
+        
+        .mountain-3 {
+            right: 0;
+            width: 0;
+            height: 0;
+            border-left: 180px solid transparent;
+            border-right: 180px solid transparent;
+            border-bottom: 180px solid rgba(26, 22, 18, 0.7);
+        }
+        
+        /* 粒子效果 */
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(212, 167, 106, 0.3);
+            border-radius: 50%;
+            z-index: 7;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateY(-20px) translateX(10px);
+                opacity: 0.6;
+            }
+        }
+        
+        /* 纹理叠加 */
+        .texture-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" /></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.05"/></svg>');
+            opacity: 0.3;
+            z-index: 11;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+        }
+    </style>
+</head>
+<body>
+    <div class="poster-container">
+        <!-- 水墨渐变 -->
+        <div class="ink-gradient"></div>
+        
+        <!-- 佛像轮廓 -->
+        <svg class="buddha-silhouette" viewBox="0 0 400 600" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="buddhaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#d4a76a;stop-opacity:0.2" />
+                    <stop offset="100%" style="stop-color:#d4a76a;stop-opacity:0.05" />
+                </linearGradient>
+            </defs>
+            <!-- 佛像头部光环 -->
+            <ellipse cx="200" cy="120" rx="80" ry="80" fill="url(#buddhaGrad)" opacity="0.3"/>
+            <!-- 佛像头部 -->
+            <ellipse cx="200" cy="140" rx="60" ry="70" fill="url(#buddhaGrad)"/>
+            <!-- 佛像身体 -->
+            <path d="M 140 200 Q 140 250, 140 300 L 140 450 Q 140 480, 160 490 L 240 490 Q 260 480, 260 450 L 260 300 Q 260 250, 260 200 Z" 
+                  fill="url(#buddhaGrad)"/>
+            <!-- 双手合十 -->
+            <ellipse cx="200" cy="320" rx="40" ry="50" fill="url(#buddhaGrad)" opacity="0.8"/>
+            <!-- 莲花座 -->
+            <ellipse cx="200" cy="500" rx="100" ry="30" fill="url(#buddhaGrad)" opacity="0.6"/>
+            <path d="M 100 500 Q 150 520, 200 500 Q 250 520, 300 500" 
+                  stroke="#d4a76a" stroke-width="2" fill="none" opacity="0.3"/>
+        </svg>
+        
+        <!-- 石窟形状 -->
+        <div class="cave-shape"></div>
+        
+        <!-- 禅意圆环 -->
+        <div class="zen-circle"></div>
+        
+        <!-- 主标题 -->
+        <h1 class="main-title">云冈石窟</h1>
+        
+        <!-- 副标题 -->
+        <div class="subtitle">
+            千年佛韵<br>
+            石破天惊
+        </div>
+        
+        <!-- 装饰线条 -->
+        <div class="decorative-line line-top"></div>
+        <div class="decorative-line line-bottom"></div>
+        
+        <!-- 书法文字 -->
+        <div class="calligraphy-text">北魏遗珍</div>
+        
+        <!-- 年代标记 -->
+        <div class="era-mark">
+            公元460年<br>
+            至<br>
+            公元524年
+        </div>
+        
+        <!-- 印章 -->
+        <div class="seal">云冈</div>
+        
+        <!-- 水墨飞溅 -->
+        <div class="ink-splash">
+            <div class="splash splash-1"></div>
+            <div class="splash splash-2"></div>
+            <div class="splash splash-3"></div>
+        </div>
+        
+        <!-- 山峦剪影 -->
+        <div class="mountain-silhouette">
+            <div class="mountain mountain-1"></div>
+            <div class="mountain mountain-2"></div>
+            <div class="mountain mountain-3"></div>
+        </div>
+        
+        <!-- 漂浮粒子 -->
+        <div class="particle" style="top: 30%; left: 20%; animation: float 3s ease-in-out infinite;"></div>
+        <div class="particle" style="top: 45%; left: 75%; animation: float 4s ease-in-out infinite 0.5s;"></div>
+        <div class="particle" style="top: 55%; left: 15%; animation: float 3.5s ease-in-out infinite 1s;"></div>
+        <div class="particle" style="top: 65%; left: 80%; animation: float 4.5s ease-in-out infinite 1.5s;"></div>
+        <div class="particle" style="top: 25%; left: 85%; animation: float 3.8s ease-in-out infinite 0.8s;"></div>
+        
+        <!-- 纹理叠加 -->
+        <div class="texture-overlay"></div>
+    </div>
+    
+    <script>
+        // 动态粒子生成
+        const container = document.querySelector('.poster-container');
+        
+        // 生成更多随机粒子
+        for (let i = 0; i < 15; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.top = Math.random() * 80 + 10 + '%';
+            particle.style.left = Math.random() * 90 + 5 + '%';
+            particle.style.animation = `float ${3 + Math.random() * 2}s ease-in-out infinite ${Math.random() * 2}s`;
+            particle.style.animationDelay = Math.random() * 3 + 's';
+            container.appendChild(particle);
+        }
+        
+        // 鼠标移动视差效果（可选）
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            const buddha = document.querySelector('.buddha-silhouette');
+            const inkGrad = document.querySelector('.ink-gradient');
+            
+            if (buddha) {
+                buddha.style.transform = `translateX(calc(-50% + ${(mouseX - 0.5) * 20}px))`;
+            }
+            
+            if (inkGrad) {
+                inkGrad.style.background = `radial-gradient(
+                    ellipse at ${mouseX * 100}% ${mouseY * 100}%,
+                    transparent 0%,
+                    rgba(0, 0, 0, 0.3) 50%,
+                    rgba(0, 0, 0, 0.6) 100%
+                )`;
+            }
+        });
+    </script>
+</body>
+</html>
