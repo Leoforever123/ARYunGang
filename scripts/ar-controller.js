@@ -6,7 +6,6 @@
 // 全局变量
 let isTargetFound = false;
 let isModelLoaded = false;
-let clickCount = 0;
 
 // DOM元素
 const loadingOverlay = document.getElementById('loading-overlay');
@@ -69,9 +68,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 监听AR场景事件
     setupARListeners();
-    
-    // 设置模型交互
-    setupModelInteraction();
     
     // 初始化性能监控
     initPerformanceMonitor();
@@ -207,7 +203,7 @@ function handleTargetFound() {
     // 3秒后隐藏提示
     setTimeout(() => {
         if (isTargetFound) {
-            updateHint('👆 点击佛像可触发动画');
+            updateHint('✨ 欣赏佛像旋转展示');
         }
     }, 3000);
 }
@@ -241,127 +237,6 @@ function handleModelLoaded() {
 function handleModelError(event) {
     console.error('❌ 模型加载失败:', event);
     showError('3D模型加载失败，请检查文件路径');
-}
-
-/**
- * 设置模型交互
- */
-function setupModelInteraction() {
-    const model = document.getElementById('buddha-entity');
-    if (!model) return;
-    
-    // 添加点击事件（需要使用raycaster）
-    model.setAttribute('class', 'clickable');
-    
-    // 创建raycaster用于检测点击
-    const camera = document.querySelector('a-camera');
-    if (camera) {
-        camera.setAttribute('raycaster', 'objects: .clickable');
-        camera.setAttribute('cursor', 'rayOrigin: mouse');
-    }
-    
-    // 监听点击事件
-    model.addEventListener('click', function() {
-        handleModelClick();
-    });
-    
-    // 触摸事件支持
-    model.addEventListener('touchstart', function(e) {
-        e.preventDefault();
-        handleModelClick();
-    });
-}
-
-/**
- * 处理模型点击
- */
-function handleModelClick() {
-    clickCount++;
-    console.log(`🖱️ 模型被点击 (第${clickCount}次)`);
-    
-    const model = document.getElementById('buddha-entity');
-    const container = document.getElementById('buddha-container');
-    
-    // 根据点击次数执行不同动画
-    switch (clickCount % 3) {
-        case 0:
-            // 放大缩小动画
-            triggerPulseAnimation(model);
-            updateHint('✨ 佛光普照');
-            break;
-        case 1:
-            // 快速旋转
-            triggerSpinAnimation(model);
-            updateHint('🌀 旋转展示');
-            break;
-        case 2:
-            // 上下浮动
-            triggerFloatAnimation(container);
-            updateHint('☁️ 腾云驾雾');
-            break;
-    }
-    
-    // 播放音效
-    playSound('click');
-    
-    // 记录交互
-    logAnalytics('model_clicked', { count: clickCount });
-}
-
-/**
- * 触发脉冲动画
- */
-function triggerPulseAnimation(element) {
-    // 移除现有动画
-    element.removeAttribute('animation__pulse');
-    
-    // 延迟后添加新动画（触发重新执行）
-    setTimeout(() => {
-        element.setAttribute('animation__pulse', {
-            property: 'scale',
-            from: '0.5 0.5 0.5',
-            to: '0.7 0.7 0.7',
-            dur: 500,
-            easing: 'easeInOutQuad',
-            loop: 2,
-            dir: 'alternate'
-        });
-    }, 10);
-}
-
-/**
- * 触发旋转动画
- */
-function triggerSpinAnimation(element) {
-    element.removeAttribute('animation__spin');
-    
-    setTimeout(() => {
-        element.setAttribute('animation__spin', {
-            property: 'rotation',
-            to: '0 720 0',
-            dur: 2000,
-            easing: 'easeInOutQuad'
-        });
-    }, 10);
-}
-
-/**
- * 触发浮动动画
- */
-function triggerFloatAnimation(element) {
-    element.removeAttribute('animation__float');
-    
-    setTimeout(() => {
-        element.setAttribute('animation__float', {
-            property: 'position',
-            from: '0 0 0',
-            to: '0 0.3 0',
-            dur: 1000,
-            easing: 'easeInOutSine',
-            loop: 2,
-            dir: 'alternate'
-        });
-    }, 10);
 }
 
 /**
@@ -536,35 +411,9 @@ window.ARDebug = {
     getStatus: function() {
         return {
             targetFound: isTargetFound,
-            modelLoaded: isModelLoaded,
-            clickCount: clickCount
+            modelLoaded: isModelLoaded
         };
-    },
-    
-    resetClickCount: function() {
-        clickCount = 0;
-        console.log('🔄 点击计数已重置');
-    },
-    
-    triggerAnimation: function(type) {
-        const model = document.getElementById('buddha-entity');
-        const container = document.getElementById('buddha-container');
-        
-        switch(type) {
-            case 'pulse':
-                triggerPulseAnimation(model);
-                break;
-            case 'spin':
-                triggerSpinAnimation(model);
-                break;
-            case 'float':
-                triggerFloatAnimation(container);
-                break;
-            default:
-                console.log('可用动画: pulse, spin, float');
-        }
     }
 };
 
 console.log('💡 调试提示: 在控制台输入 ARDebug.getStatus() 查看状态');
-console.log('💡 调试提示: 在控制台输入 ARDebug.triggerAnimation("pulse") 测试动画');
