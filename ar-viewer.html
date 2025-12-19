@@ -201,7 +201,7 @@
     <a-scene
         id="ar-scene"
         mindar-image="
-            imageTargetSrc: assets/target.mind;
+            imageTargetSrc: ;
             uiScanning: no;
             uiLoading: no;
         "
@@ -215,7 +215,7 @@
             <!-- 3D佛像模型 -->
             <a-asset-item 
                 id="buddha-model" 
-                src="models/buddha_big.glb"
+                src=""
             ></a-asset-item>
         </a-assets>
         
@@ -234,7 +234,7 @@
                 <!-- 佛像模型 -->
                 <a-gltf-model
                     id="buddha-entity"
-                    src="models/buddha_big.glb"
+                    src="#buddha-model"
                     position="0 0 0"
                     rotation="0 0 0"
                     scale="0.7 0.7 0.7"
@@ -285,6 +285,35 @@
             
         </a-entity>
     </a-scene>
+    
+    <script>
+        // 在加载 AR 控制器之前应用配置
+        document.addEventListener('DOMContentLoaded', function() {
+            applyConfiguration();
+        });
+        
+        function applyConfiguration() {
+            // 从 localStorage 读取配置
+            const selectedTarget = JSON.parse(localStorage.getItem('ar_selected_target') || '{"mind":"assets/target.mind"}');
+            const selectedModel = JSON.parse(localStorage.getItem('ar_selected_model') || '{"path":"models/buddha_big.glb"}');
+            
+            console.log('📋 应用配置:');
+            console.log('  标记图像:', selectedTarget.mind);
+            console.log('  3D模型:', selectedModel.path);
+            
+            // 设置标记图像路径
+            const scene = document.querySelector('a-scene');
+            if (scene) {
+                scene.setAttribute('mindar-image', `imageTargetSrc: ${selectedTarget.mind}; uiScanning: no; uiLoading: no;`);
+            }
+            
+            // 设置3D模型路径
+            const modelAsset = document.getElementById('buddha-model');
+            if (modelAsset) {
+                modelAsset.setAttribute('src', selectedModel.path);
+            }
+        }
+    </script>
     
     <script src="scripts/ar-controller.js"></script>
 </body>

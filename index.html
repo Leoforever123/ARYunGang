@@ -195,6 +195,79 @@
             pointer-events: none;
             mix-blend-mode: overlay;
         }
+        
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: clamp(48px, 12vw, 80px);
+                letter-spacing: 15px;
+                padding: 0 20px;
+            }
+            
+            .subtitle {
+                font-size: clamp(16px, 4vw, 22px);
+                letter-spacing: 6px;
+                padding: 0 20px;
+                top: calc(50% + 80px);
+            }
+            
+            .click-hint {
+                font-size: clamp(13px, 3vw, 18px);
+                letter-spacing: 3px;
+                bottom: 20%;
+            }
+            
+            .seal {
+                width: clamp(50px, 10vw, 70px);
+                height: clamp(50px, 10vw, 70px);
+                font-size: clamp(18px, 4vw, 26px);
+                bottom: 10%;
+                right: 5%;
+            }
+        }
+        
+        /* 小屏手机适配 */
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: clamp(36px, 14vw, 60px);
+                letter-spacing: 10px;
+            }
+            
+            .subtitle {
+                font-size: clamp(14px, 4.5vw, 20px);
+                letter-spacing: 4px;
+                top: calc(50% + 70px);
+            }
+            
+            .click-hint {
+                font-size: 12px;
+                letter-spacing: 2px;
+                bottom: 25%;
+            }
+            
+            .seal {
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+            }
+        }
+        
+        /* 横屏模式优化 */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .main-title {
+                font-size: clamp(40px, 10vw, 70px);
+                letter-spacing: 12px;
+            }
+            
+            .subtitle {
+                font-size: clamp(14px, 3vw, 20px);
+                top: calc(50% + 60px);
+            }
+            
+            .click-hint {
+                bottom: 15%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -224,7 +297,7 @@
         </svg>
         
         <!-- 主标题 -->
-        <h1 class="main-title">云冈石窟</h1>
+        <h1 class="main-title">云上云冈</h1>
         
         <!-- 副标题 -->
         <div class="subtitle">AR 穿越体验</div>

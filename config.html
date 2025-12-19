@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云冈石窟 AR - 配置选择</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=ZCOOL+XiaoWei&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background: linear-gradient(180deg, #1a1612 0%, #2d2620 50%, #1a1612 100%);
+            color: #d4a76a;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .config-container {
+            background: rgba(45, 38, 32, 0.9);
+            border: 2px solid rgba(212, 167, 106, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+        }
+        
+        .config-title {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: clamp(28px, 5vw, 42px);
+            color: #d4a76a;
+            text-align: center;
+            margin-bottom: 15px;
+            letter-spacing: 8px;
+            text-shadow: 0 0 20px rgba(212, 167, 106, 0.3);
+        }
+        
+        .config-subtitle {
+            text-align: center;
+            color: #8b7355;
+            font-size: 16px;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 24px;
+            color: #d4a76a;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(212, 167, 106, 0.2);
+            letter-spacing: 4px;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .option-card {
+            background: rgba(26, 22, 18, 0.6);
+            border: 2px solid rgba(212, 167, 106, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .option-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(212, 167, 106, 0.5);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .option-card.selected {
+            background: rgba(139, 111, 71, 0.3);
+            border-color: #d4a76a;
+            box-shadow: 0 0 20px rgba(212, 167, 106, 0.3);
+        }
+        
+        .option-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .option-title {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 18px;
+            color: #d4a76a;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+        
+        .option-desc {
+            font-size: 14px;
+            color: #8b7355;
+            line-height: 1.6;
+        }
+        
+        .option-badge {
+            display: inline-block;
+            background: rgba(212, 167, 106, 0.2);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #d4a76a;
+            margin-top: 8px;
+        }
+        
+        .preview-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(212, 167, 106, 0.3);
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+        
+        .btn {
+            padding: 15px 40px;
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 18px;
+            border: 2px solid #d4a76a;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 4px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #8b6f47 0%, #d4a76a 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212, 167, 106, 0.4);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: #d4a76a;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(212, 167, 106, 0.1);
+        }
+        
+        .info-box {
+            background: rgba(212, 167, 106, 0.1);
+            border-left: 4px solid #d4a76a;
+            padding: 15px 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+        
+        .info-box p {
+            color: #8b7355;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        
+        /* 平板设备适配 */
+        @media (max-width: 1024px) {
+            .config-container {
+                padding: 35px;
+                max-width: 800px;
+            }
+            
+            .options-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 15px;
+            }
+        }
+        
+        /* 小屏平板和大屏手机适配 */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .config-container {
+                padding: 25px 20px;
+                border-radius: 15px;
+            }
+            
+            .config-title {
+                font-size: clamp(24px, 6vw, 32px);
+                letter-spacing: 4px;
+                margin-bottom: 10px;
+            }
+            
+            .config-subtitle {
+                font-size: 14px;
+                margin-bottom: 30px;
+            }
+            
+            .section {
+                margin-bottom: 30px;
+            }
+            
+            .section-title {
+                font-size: 20px;
+                letter-spacing: 3px;
+                margin-bottom: 15px;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .option-card {
+                padding: 15px;
+            }
+            
+            .preview-image {
+                height: 100px;
+            }
+            
+            .option-icon {
+                font-size: 36px;
+            }
+            
+            .option-title {
+                font-size: 16px;
+            }
+            
+            .buttons {
+                flex-direction: column;
+                gap: 12px;
+                margin-top: 30px;
+            }
+            
+            .btn {
+                width: 100%;
+                padding: 14px 30px;
+                font-size: 16px;
+                letter-spacing: 3px;
+            }
+            
+            .info-box {
+                padding: 12px 15px;
+                margin-top: 15px;
+            }
+            
+            .info-box p {
+                font-size: 13px;
+            }
+        }
+        
+        /* 小屏手机适配 */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .config-container {
+                padding: 20px 15px;
+                border-radius: 12px;
+            }
+            
+            .config-title {
+                font-size: clamp(20px, 7vw, 28px);
+                letter-spacing: 3px;
+                margin-bottom: 8px;
+            }
+            
+            .config-subtitle {
+                font-size: 13px;
+                margin-bottom: 25px;
+                letter-spacing: 1px;
+            }
+            
+            .section {
+                margin-bottom: 25px;
+            }
+            
+            .section-title {
+                font-size: 18px;
+                letter-spacing: 2px;
+                margin-bottom: 12px;
+                padding-bottom: 8px;
+            }
+            
+            .options-grid {
+                gap: 12px;
+            }
+            
+            .option-card {
+                padding: 12px;
+                border-radius: 12px;
+            }
+            
+            .preview-image {
+                height: 80px;
+                border-radius: 8px;
+                margin-bottom: 8px;
+            }
+            
+            .option-icon {
+                font-size: 32px;
+                margin-bottom: 8px;
+            }
+            
+            .option-title {
+                font-size: 15px;
+                margin-bottom: 6px;
+                letter-spacing: 1px;
+            }
+            
+            .option-desc {
+                font-size: 13px;
+            }
+            
+            .option-badge {
+                padding: 3px 10px;
+                font-size: 11px;
+                margin-top: 6px;
+            }
+            
+            .buttons {
+                gap: 10px;
+                margin-top: 25px;
+            }
+            
+            .btn {
+                padding: 12px 25px;
+                font-size: 15px;
+                letter-spacing: 2px;
+                border-radius: 25px;
+            }
+            
+            .info-box {
+                padding: 10px 12px;
+                margin-top: 12px;
+                border-radius: 6px;
+            }
+            
+            .info-box p {
+                font-size: 12px;
+                line-height: 1.6;
+            }
+        }
+        
+        /* 超小屏手机适配（例如 iPhone SE） */
+        @media (max-width: 375px) {
+            .config-title {
+                font-size: 22px;
+                letter-spacing: 2px;
+            }
+            
+            .config-subtitle {
+                font-size: 12px;
+            }
+            
+            .section-title {
+                font-size: 16px;
+            }
+            
+            .option-title {
+                font-size: 14px;
+            }
+            
+            .option-desc {
+                font-size: 12px;
+            }
+            
+            .btn {
+                padding: 11px 20px;
+                font-size: 14px;
+            }
+        }
+        
+        /* 触摸设备优化 */
+        @media (hover: none) and (pointer: coarse) {
+            .option-card {
+                /* 增加触摸目标大小 */
+                min-height: 60px;
+            }
+            
+            .option-card:active {
+                transform: scale(0.98);
+                transition: transform 0.1s ease;
+            }
+            
+            .btn:active {
+                transform: scale(0.98);
+            }
+        }
+        
+        /* 横屏模式优化 */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .config-container {
+                padding: 20px;
+            }
+            
+            .config-title {
+                font-size: 24px;
+                margin-bottom: 8px;
+            }
+            
+            .config-subtitle {
+                margin-bottom: 20px;
+            }
+            
+            .section {
+                margin-bottom: 20px;
+            }
+            
+            .options-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            
+            .preview-image {
+                height: 70px;
+            }
+            
+            .buttons {
+                flex-direction: row;
+            }
+            
+            .btn {
+                width: auto;
+                padding: 10px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="config-container">
+        <h1 class="config-title">云上云冈</h1>
+        <p class="config-subtitle">选择标记图像和3D模型</p>
+        
+        <!-- 标记图像选择 -->
+        <div class="section">
+            <h2 class="section-title">📱 选择标记图像</h2>
+            <div class="options-grid" id="targetOptions">
+                <!-- 预制选项1 -->
+                <div class="option-card" data-target="target1" data-mind="assets/targets/target1.mind" data-image="assets/targets/target1.png">
+                    <img class="preview-image" src="assets/target1.png" alt="云冈第二十窟">
+                    <div class="option-icon">🏛️</div>
+                    <div class="option-title">云冈第二十窟</div>
+                    <div class="option-desc">露天大佛</div>
+                    <span class="option-badge">推荐</span>
+                </div>
+                
+                <!-- 预制选项2 -->
+                <div class="option-card" data-target="target2" data-mind="assets/targets/target2.mind" data-image="assets/targets/target2.png">
+                    <img class="preview-image" src="assets/target2.jpg" alt="云冈第二十窟">
+                    <div class="option-icon">🗿</div>
+                    <div class="option-title">云岗第二十窟</div>
+                    <div class="option-desc">大佛侧颜</div>
+                </div>
+                
+                <!-- 预制选项3 -->
+                <div class="option-card" data-target="target3" data-mind="assets/targets/target3.mind" data-image="assets/targets/target3.png">
+                    <img class="preview-image" src="assets/target3.jpg" alt="云冈建筑">
+                    <div class="option-icon">📜</div>
+                    <div class="option-title">云岗建筑</div>
+                    <div class="option-desc">黄土小楼</div>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <p>💡 <strong>提示：</strong>请将摄像头对准所选标记图像以触发 AR 效果。建议打印图像或在另一设备上显示。</p>
+            </div>
+        </div>
+        
+        <!-- 3D模型选择 -->
+        <div class="section">
+            <h2 class="section-title">🗿 选择3D模型</h2>
+            <div class="options-grid">
+                <!-- 高质量模型 -->
+                <div class="option-card" data-model="standard" data-path="models/buddha.glb">
+                    <div class="option-icon">💎</div>
+                    <div class="option-title">标准模型</div>
+                    <div class="option-desc">高精度细节，文件较大</div>
+                    <span class="option-badge">35 MB</span>
+                </div>
+                
+                <!-- 轻量模型（默认选中） -->
+                <div class="option-card selected" data-model="lightweight" data-path="models/buddha_big.glb">
+                    <div class="option-icon">⚡</div>
+                    <div class="option-title">轻量模型</div>
+                    <div class="option-desc">加载快速，性能优秀</div>
+                    <span class="option-badge">2.6 MB · 推荐</span>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <p>💡 <strong>提示：</strong>轻量模型加载速度快，适合移动设备。标准模型细节更丰富，适合高性能设备。</p>
+            </div>
+        </div>
+        
+        <!-- 操作按钮 -->
+        <div class="buttons">
+            <button class="btn btn-secondary" onclick="window.location.href='main.html'">
+                返回首页
+            </button>
+            <button class="btn btn-primary" onclick="startARExperience()">
+                启动 AR 体验
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // 配置存储
+        let selectedTarget = {
+            id: 'default',
+            mind: 'assets/target.mind',
+            image: 'assets/target.png'
+        };
+        
+        let selectedModel = {
+            id: 'lightweight',
+            path: 'models/buddha_big.glb'
+        };
+        
+        // 初始化选择事件
+        document.addEventListener('DOMContentLoaded', function() {
+            // 标记图像选择
+            const targetCards = document.querySelectorAll('#targetOptions .option-card');
+            targetCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // 移除所有选中状态
+                    targetCards.forEach(c => c.classList.remove('selected'));
+                    // 添加当前选中状态
+                    this.classList.add('selected');
+                    
+                    // 保存选择
+                    selectedTarget = {
+                        id: this.dataset.target,
+                        mind: this.dataset.mind,
+                        image: this.dataset.image
+                    };
+                    
+                    console.log('✅ 已选择标记图像:', selectedTarget);
+                });
+            });
+            
+            // 3D模型选择
+            const modelCards = document.querySelectorAll('[data-model]');
+            modelCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // 移除所有选中状态
+                    modelCards.forEach(c => c.classList.remove('selected'));
+                    // 添加当前选中状态
+                    this.classList.add('selected');
+                    
+                    // 保存选择
+                    selectedModel = {
+                        id: this.dataset.model,
+                        path: this.dataset.path
+                    };
+                    
+                    console.log('✅ 已选择3D模型:', selectedModel);
+                });
+            });
+            
+            // 从 localStorage 恢复之前的选择
+            loadPreviousSelections();
+        });
+        
+        // 加载之前的选择
+        function loadPreviousSelections() {
+            const savedTarget = localStorage.getItem('ar_selected_target');
+            const savedModel = localStorage.getItem('ar_selected_model');
+            
+            if (savedTarget) {
+                const target = JSON.parse(savedTarget);
+                const targetCard = document.querySelector(`[data-target="${target.id}"]`);
+                if (targetCard) {
+                    targetCard.click();
+                }
+            }
+            
+            if (savedModel) {
+                const model = JSON.parse(savedModel);
+                const modelCard = document.querySelector(`[data-model="${model.id}"]`);
+                if (modelCard) {
+                    modelCard.click();
+                }
+            }
+        }
+        
+        // 启动AR体验
+        function startARExperience() {
+            // 保存配置到 localStorage
+            localStorage.setItem('ar_selected_target', JSON.stringify(selectedTarget));
+            localStorage.setItem('ar_selected_model', JSON.stringify(selectedModel));
+            
+            console.log('🚀 启动AR体验，配置如下:');
+            console.log('  标记图像:', selectedTarget);
+            console.log('  3D模型:', selectedModel);
+            
+            // 跳转到AR页面
+            window.location.href = 'ar-viewer.html';
+        }
+        
+        // 添加键盘快捷键
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                startARExperience();
+            } else if (e.key === 'Escape') {
+                window.location.href = 'main.html';
+            }
+        });
+    </script>
+</body>
+</html>
+
