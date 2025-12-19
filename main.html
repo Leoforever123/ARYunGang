@@ -586,7 +586,7 @@
                 <a href="config.html" class="cta-button">
                     <span>⚙️ 选择配置</span>
                 </a>
-                <a href="ar-viewer.html" class="cta-button" style="font-size: clamp(16px, 3vw, 24px); padding: 15px 45px;">
+                <a href="javascript:void(0)" onclick="quickStartAR()" class="cta-button" style="font-size: clamp(16px, 3vw, 24px); padding: 15px 45px;">
                     <span>快速启动 AR 相机</span>
                 </a>
             </div>
@@ -697,5 +697,36 @@
         <!-- 底部装饰线 -->
         <div class="decorative-line" style="margin-top: 40px;"></div>
     </div>
+    
+    <script>
+        /**
+         * Quick start AR experience with default configuration
+         */
+        function quickStartAR() {
+            // Set default target configuration (target1)
+            const defaultTarget = {
+                id: 'target1',
+                mind: 'assets/targets/target1.mind',
+                image: 'assets/targets/target1.png'
+            };
+            
+            // Set default model configuration (standard model - 35MB)
+            const defaultModel = {
+                id: 'standard',
+                path: 'models/buddha.glb'
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('ar_selected_target', JSON.stringify(defaultTarget));
+            localStorage.setItem('ar_selected_model', JSON.stringify(defaultModel));
+            
+            console.log('🚀 快速启动 AR，使用默认配置:');
+            console.log('  标记图像: target1 (云冈第二十窟)');
+            console.log('  3D模型: 标准模型 (35 MB)');
+            
+            // Navigate to AR viewer
+            window.location.href = 'ar-viewer.html';
+        }
+    </script>
 </body>
 </html>

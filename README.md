@@ -8,51 +8,16 @@
 - 🗿 **3D 模型展示** - 高质量佛像模型，自动旋转展示
 - 🎨 **云冈美学滤镜** - AI 训练的云冈风格色彩滤镜，可调节强度
 - 📱 **移动端优化** - 完全响应式设计，支持手机和平板
-- 🌐 **纯静态网页** - 无需后端服务器，可直接部署到 GitHub Pages
 
-## 🚀 快速开始
-
-### 方式一：本地运行
-
-```bash
-# 1. 进入项目目录
-cd ARYunGang
-
-# 2. 启动 HTTP 服务器
-python -m http.server 8000
-
-# 3. 访问浏览器
-# 打开 http://localhost:8000
-```
-
-### 方式二：部署到 GitHub Pages
-
-1. **创建 GitHub 仓库并推送代码**
-```bash
-git init
-git add .
-git commit -m "云冈石窟 AR 体验项目"
-git remote add origin https://github.com/你的用户名/yungang-ar.git
-git branch -M main
-git push -u origin main
-```
-
-2. **启用 GitHub Pages**
-   - 进入仓库 Settings → Pages
-   - Source 选择：Branch: `main`, Folder: `/ (root)`
-   - 保存后等待 1-2 分钟
-   - 访问：`https://你的用户名.github.io/yungang-ar/`
 
 ## 📖 使用说明
 
 ### 1. 配置选择（可选）
 
 1. 在主页点击"⚙️ 选择配置"按钮
-2. 选择标记图像（3个预制选项 + 1个默认）
+2. 选择标记图像（3个预制选项）
 3. 选择3D模型（标准模型 35MB 或 轻量模型 2.6MB）
 4. 点击"启动 AR 体验"
-
-**提示**：也可以直接点击"快速启动 AR 相机"使用默认配置
 
 ### 2. 启动 AR 体验
 
@@ -154,99 +119,12 @@ ARYunGang/
 - 使用高性能设备
 - 关闭其他占用 GPU 的程序
 
-## ❓ 常见问题
-
-### Q1: 摄像头无法打开？
-
-**解决方案：**
-- 检查浏览器摄像头权限设置
-- 确保使用 HTTPS 或 localhost
-- 尝试使用 Chrome 浏览器
-- 关闭其他正在使用摄像头的应用
-
-### Q2: 无法识别标记图像？
-
-**解决方案：**
-- 确保标记图像（`target.png`）清晰可见
-- 标记图像需占据屏幕 25% 以上区域
-- 保持充足光照，避免反光和阴影
-- 标记图像需要打印或在另一设备上显示
-
-### Q3: AR 初始化失败？
-
-**解决方案：**
-- 使用 Chrome 浏览器（推荐）
-- 检查 `assets/target.mind` 文件是否存在
-- 打开浏览器控制台查看详细错误信息
-- 确保网络连接正常（首次加载需下载 AR 库）
-
-### Q4: 3D 模型不显示？
-
-**解决方案：**
-- 检查 `models/buddha.glb` 或 `buddha_big.glb` 文件是否存在
-- 确认标记图像已被成功识别
-- 等待模型加载完成（大文件需要更长时间）
-- 查看浏览器控制台是否有加载错误
-
-### Q5: 云冈滤镜无法使用？
-
-**解决方案：**
-- 确认 `filters/yungang_filter.bin` 文件存在（6MB）
-- 等待滤镜数据加载完成（按钮会从"加载中"变为"关闭"）
-- 检查浏览器控制台是否有加载错误
-- 刷新页面重试
-
-## 📦 完整部署到 GitHub Pages
-
-### 文件大小检查
-
-GitHub Pages 限制：
-- 单文件 < 100MB ✅
-- 总仓库 < 1GB ✅
-
-本项目文件大小：
-- `buddha.glb`: 35MB ✅
-- `buddha_big.glb`: 2.6MB ✅
-- `yungang_filter.bin`: 6MB ✅
-- 总计：~50MB ✅
-
-**完全满足 GitHub Pages 要求！**
-
-### 部署步骤
-
-```bash
-# 1. 初始化 Git 仓库
-git init
-
-# 2. 添加所有文件
-git add .
-
-# 3. 提交
-git commit -m "云冈石窟 AR 体验项目"
-
-# 4. 关联 GitHub 仓库
-git remote add origin https://github.com/你的用户名/yungang-ar.git
-
-# 5. 推送代码
-git branch -M main
-git push -u origin main
-```
-
-### 启用 GitHub Pages
-
-1. 打开 GitHub 仓库页面
-2. 点击 **Settings** → **Pages**
-3. 在 **Source** 下选择：
-   - Branch: `main`
-   - Folder: `/ (root)`
-4. 点击 **Save**
-5. 等待 1-2 分钟，访问：`https://你的用户名.github.io/yungang-ar/`
 
 ## 👥 团队成员
 
 | 成员 | 职责 |
 |------|------|
-| 王骏达 | AI 云冈滤镜训练与 Web 集成 |
+| 王骏达 | AI 云冈滤镜训练 |
 | 凌萌 | AR 图像识别功能开发 |
 | 侯超然 | 3D 模型与动画控制 |
 
@@ -259,12 +137,3 @@ git push -u origin main
 - 3D 模型：遵守 Sketchfab 平台的 CC 协议
 
 ---
-
-## 🎉 开始体验
-
-项目已准备就绪！
-
-- 本地测试：`python -m http.server 8000`
-- GitHub Pages：按照上述步骤部署
-
-祝你体验愉快！如有问题，请查阅本文档或联系团队成员。
